@@ -1,0 +1,23 @@
+{
+  "name": "slackorgsidebarorganiser",
+  "version": "1.0.0",
+  "description": "SOSO is a tool to help you organise your Slack sidebar. It will automatically move channels to the correct category based on the channel name.",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack --watch",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.5",
+    "ts-loader": "^9.4.1",
+    "typescript": "^4.8.4",
+    "webpack-cli": "^4.10.0"
+  },
+  "dependencies": {
+    "@types/chrome": "^0.0.200",
+    "copy-to-clipboard": "^3.3.2",
+    "js-yaml": "^4.1.0"
+  }
+}

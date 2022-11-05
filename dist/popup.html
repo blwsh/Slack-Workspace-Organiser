@@ -1,0 +1,47 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="introduction">
+        <div class="container">
+            <h1>Slack Workspace Organiser</h1>
+            <p>
+                Ordering your sidebar helps with productivity and makes it easier to find the right person, team or topic.
+            </p>
+
+            <ul>
+                <li>
+                    To share your sidebar ordering with others, organise your sidebar in to sections as you normally would using Slack, then click the export button below.
+                </li>
+                <li>
+                    To import a sidebar ordering shared with you, click the import button below then paste the code
+                    you were provided with in the textarea. Once all your channels have been organised for you, Slack will automatically reload.
+                </li>
+            </ul>
+        </div>
+
+        <div id="actions">
+            <button id="exportButton">Export</button>
+            <span class="txt-grey font-bold mx-1">or</span>
+            <button id="openImporterButton">Import</button>
+        </div>
+    </div>
+
+    <div id="importer" class="container d-none">
+        <label for="importerText">
+            <textarea id="importerText" placeholder="Paste your import code here"></textarea>
+        </label>
+
+        <button id="processImport" class="mb-1">Import</button>
+        <button id="cancelImport" class="btn-grey mx-1">Cancel</button>
+    </div>
+
+    <script src="bundle.js"></script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+{
+  "name": "Slack Workspace Organiser",
+  "version": "1.0",
+  "manifest_version": 3,
+  "description": "Organise your Slack sidebar by using a yaml file",
+  "permissions": [
+    "tabs",
+    "storage",
+    "activeTab",
+    "webNavigation",
+    "webRequest",
+    "cookies"
+  ],
+  "host_permissions": [
+    "https://*.slack.com/*"
+  ],
+  "icons": {
+    "16": "resources/slack.png",
+    "48": "resources/slack.png",
+    "128": "resources/slack.png"
+  },
+  "background": {
+    "service_worker": "dist/background.js"
+  },
+  "action": {
+    "default_title": "Organise your Slack sidebar",
+    "default_popup": "dist/popup.html"
+  }
+}
