@@ -1,6 +1,6 @@
+import * as ui from "./ui";
 import WebRequestBodyDetails = chrome.webRequest.WebRequestBodyDetails;
 import Slack from "./slack";
-
 
 /**
  * A simple function which communicates with storage to initialise slack.
@@ -9,24 +9,16 @@ import Slack from "./slack";
  * Slack API.
  */
 export async function InitSlack() {
-  // Init slack
-  const xoxcToken = await getSlackToken();
-
-  if (!xoxcToken) {
-    alert('❌ No xoxc token found. Please login to Slack and try again.');
-    return new Slack({xoxcToken: ''});
-  }
-
-  return new Slack({xoxcToken});
+  return new Slack({xoxcToken: await getSlackToken()});
 }
 
 export function getSlackToken() {
   return new Promise((resolve: (value: string | undefined) => void, reject) => {
     chrome.storage.local.get(['xoxcToken'], (result) => {
-      if (result.xoxcToken) {
-        resolve(result.xoxcToken);
-      } else {
-        reject();
+      resolve(result.xoxcToken); // We always resolve the promise, even if the token is undefined
+
+      if (!result.xoxcToken) {
+        reject('No xoxc token found');
       }
     });
   });
@@ -43,14 +35,23 @@ export function setSlackToken(token: string) {
 export function captureXoxcToken(details: WebRequestBodyDetails) {
   // Check chrome.storage.local for token
   getSlackToken().then((tokenFromStorage) => {
-    if (tokenFromStorage) return;
+    // Check the request body for a xoxc token
+    const foundXoxcToken = details?.requestBody?.formData?.token[0];
 
-    // When no token can be found in chrome.storage.local, check the request body for the xoxc token
-    const xoxcToken = details?.requestBody?.formData?.token[0];
+    // If we've found a token in storage, we can return early but only if the token in the request body is:
+    // 1. not undefined
+    // 2. the same as the token in storage
+    if (tokenFromStorage && foundXoxcToken && tokenFromStorage === foundXoxcToken) {
+      ui.statusIndicator.setIsOk(true)
+      return;
+    }
 
-    if (xoxcToken) {
-      setSlackToken(xoxcToken).then(() => {
+    ui.statusIndicator.setIsOk(false)
+
+    if (foundXoxcToken) {
+      setSlackToken(foundXoxcToken).then(() => {
         console.log('✅ Slack xoxc token captured.')
+        ui.statusIndicator.setIsOk(true);
       }).catch(console.error);
     }
   });

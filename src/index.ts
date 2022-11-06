@@ -1,7 +1,13 @@
 import {captureXoxcToken} from "./util";
-import {cancelImportHandler, exportHandler, processImportHandler} from "./handlers";
+import {
+  cancelImportHandler,
+  exportHandler,
+  onImporterTextChangeHandler,
+  openImporterHandler,
+  processImportHandler
+} from "./handlers";
 import * as ui from "./ui";
-import {openImporterHandler} from "./handlers/openImporterHandler";
+import * as util from "./util";
 
 // Find and store tokens which are used to authenticate with Slack
 chrome.webRequest.onBeforeRequest
@@ -12,3 +18,8 @@ ui.exportButton.element.addEventListener('click', exportHandler);
 ui.openImporterButton.element.addEventListener('click', openImporterHandler);
 ui.processImportButton.element.addEventListener('click', processImportHandler);
 ui.cancelImportButton.element.addEventListener('click', cancelImportHandler);
+ui.importer.textElement.addEventListener('change', onImporterTextChangeHandler);
+ui.importer.textElement.addEventListener('mouseleave', onImporterTextChangeHandler);
+
+// Update the status indicator
+util.getSlackToken().then(token => ui.statusIndicator.setIsOk(!!token));

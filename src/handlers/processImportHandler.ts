@@ -7,39 +7,53 @@ import Slack from "../slack";
 type ImportRows = Record<string, { emoji: string, channels: string[] }>
 
 export async function processImportHandler() {
-  const slack = await InitSlack();
+  ui.importerMessage.setMessage('');
+  ui.processImportButton.setEnabled(false);
+  ui.processImportButton.setText('Importing...');
 
   const sectionsToImport = (yaml.load(ui.importer.textElement.value) || {}) as ImportRows;
 
-  const userIdToUsernameMap = await slack.listUsers();
+  try {
+    const slack = await InitSlack();
 
-  const channelNameToIdMap: Record<string, string> = swap(await slack.getConversationIdsToNameMap(userIdToUsernameMap));
+    const userIdToUsernameMap = await slack.listUsers();
 
-  const {channel_sections: existingSections} = await slack.postMessage('users.channelSections.list') as { channel_sections: ChannelSection[] };
-  const sectionNameToIdMap: Record<string, string> = Object.fromEntries(existingSections.map(({channel_section_id: id, name}) => [name, id]));
+    const channelNameToIdMap: Record<string, string> = swap(await slack.getConversationIdsToNameMap(userIdToUsernameMap));
 
-  for (const [sectionName, section] of Object.entries(sectionsToImport)) {
-    let sectionId = sectionNameToIdMap[sectionName];
+    const {channel_sections: existingSections} = await slack.postMessage('users.channelSections.list') as { channel_sections: ChannelSection[] };
+    const sectionNameToIdMap: Record<string, string> = Object.fromEntries(existingSections.map(({channel_section_id: id, name}) => [name, id]));
 
-    if (!sectionId) {
-      sectionNameToIdMap[sectionName] = sectionId = await createSection(sectionName, section.emoji, slack);
+    for (const [sectionName, section] of Object.entries(sectionsToImport)) {
+      let sectionId = sectionNameToIdMap[sectionName];
 
       if (!sectionId) {
-        console.warn('Unable to create section', sectionName);
-        continue;
+        sectionNameToIdMap[sectionName] = sectionId = await createSection(sectionName, section.emoji, slack);
+
+        if (!sectionId) {
+          console.warn('Unable to create section', sectionName);
+          continue;
+        }
       }
+
+      // Move channels to section
+      slack.postMessage('users.channelSections.channels.bulkUpdate', {
+        insert: JSON.stringify([
+          {
+            "channel_section_id": sectionId,
+            "channel_ids": section.channels.map(channelName => channelNameToIdMap[channelName]),
+          }
+        ])
+      }).catch(console.error);
     }
 
-    // Move channels to section
-    slack.postMessage('users.channelSections.channels.bulkUpdate', {
-      insert: JSON.stringify([
-        {
-          "channel_section_id": sectionId,
-          "channel_ids": section.channels.map(channelName => channelNameToIdMap[channelName]),
-        }
-      ])
-    }).catch(console.error)
+    ui.importerMessage.setMessage('Imported successfully!');
+  } catch (e) {
+    ui.importerMessage.setMessage('There was an error importing your sections.');
+    console.error(e);
   }
+
+  ui.processImportButton.setEnabled(true);
+  ui.processImportButton.setText('Import');
 }
 
 async function createSection(sectionName: string, emoji: string = '', slack: Slack): Promise<string> {

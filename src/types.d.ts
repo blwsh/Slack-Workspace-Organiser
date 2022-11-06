@@ -1,5 +1,5 @@
 export type SlackConfig = {
-  xoxcToken: string,
+  xoxcToken?: string,
   clientHeaders?: HeadersInit
 }
 

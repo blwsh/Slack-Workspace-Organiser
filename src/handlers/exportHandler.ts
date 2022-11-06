@@ -35,8 +35,10 @@ export async function exportHandler() {
       alert('✅ Channel sections copied to clipboard.');
     });
   } catch (e) {
-    ui.exportButton.enableButton();
     alert('❌ Error exporting channel sections.');
+    console.error(e);
     throw e;
   }
+
+  ui.exportButton.enableButton();
 }

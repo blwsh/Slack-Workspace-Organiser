@@ -13,7 +13,9 @@ export default class Slack {
     const formData = new FormData()
 
     // Add the xoxc token to the request body
-    formData.append('token', this.config.xoxcToken);
+    if (this.config.xoxcToken) {
+      formData.append('token', this.config.xoxcToken);
+    }
 
     // Add the action to the request body
     Object.entries(body).forEach(([key, value]) => formData.append(key, value));
