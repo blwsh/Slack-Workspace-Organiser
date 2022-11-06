@@ -1,4 +1,5 @@
 import {API_METHODS, SlackConfig} from "./types";
+import {invalidateToken} from "./util";
 
 export default class Slack {
   constructor(
@@ -20,14 +21,25 @@ export default class Slack {
     // Add the action to the request body
     Object.entries(body).forEach(([key, value]) => formData.append(key, value));
 
-    const response = await fetch(`https://txdo.slack.com/api/${action}`, {
+    const response = fetch(`https://txdo.slack.com/api/${action}`, {
       method: 'POST',
       "referrerPolicy": "no-referrer",
       headers: this.config.clientHeaders,
       body: formData,
+    }).then(res => res.json());
+
+    response.then(res => {
+      // If the token is invalid, clear it from storage
+      if (!res.ok) {
+        if (res.error === 'not_authed' && this.config.xoxcToken) {
+          invalidateToken();
+        }
+
+        throw new Error(res.error);
+      }
     });
 
-    return response.json();
+    return response;
   }
 
   async getConversationIdsToNameMap(
@@ -65,12 +77,12 @@ export default class Slack {
       cursor: nextCursor || '',
       limit: '750',
     }).then(async res => {
-      const {members} = res as { members: { id: string, name: string }[] };
+      const {members = []} = res as { members: { id: string, name: string }[] };
       const userMap: { [key: string]: string } = {};
       members.forEach(({id, name}) => userMap[id] = name);
 
       // If there are more channels, recursively call this function
-      if (res.response_metadata.next_cursor) {
+      if (res.response_metadata?.next_cursor) {
         return {...userMap, ...await this.listUsers(res.response_metadata.next_cursor)};
       } else {
         return userMap;

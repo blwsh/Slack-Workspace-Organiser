@@ -1,6 +1,6 @@
 import * as ui from "../ui";
 
 export function openImporterHandler() {
-  ui.importer.show();
-  ui.introduction.hide();
+  ui.importer.show(true);
+  ui.introduction.show(false)
 }

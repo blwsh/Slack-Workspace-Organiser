@@ -24,12 +24,17 @@ export function getSlackToken() {
   });
 }
 
-export function setSlackToken(token: string) {
+export function setSlackToken(token: string | undefined) {
   return new Promise((resolve: (value: string | undefined) => void) => {
     chrome.storage.local.set({ xoxcToken: token }, () => {
       resolve(token);
     });
   });
+}
+
+export function invalidateToken() {
+  setSlackToken(undefined).then(() => console.warn('Cleared invalid token'));
+  ui.statusIndicator.setIsOk(false);
 }
 
 export function captureXoxcToken(details: WebRequestBodyDetails) {
@@ -52,6 +57,8 @@ export function captureXoxcToken(details: WebRequestBodyDetails) {
       setSlackToken(foundXoxcToken).then(() => {
         console.log('✅ Slack xoxc token captured.')
         ui.statusIndicator.setIsOk(true);
+        ui.visitSlackNotice.show(false);
+        ui.introduction.show(true);
       }).catch(console.error);
     }
   });

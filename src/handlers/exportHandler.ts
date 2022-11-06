@@ -4,6 +4,8 @@ import copy from "copy-to-clipboard";
 import * as yaml from "js-yaml";
 import * as ui from "../ui";
 
+const ignoredSections = ['', 'Slack Connect', 'Recent Apps'];
+
 export async function exportHandler() {
   try {
     ui.exportButton.disableButton();
@@ -17,13 +19,15 @@ export async function exportHandler() {
       const {channel_sections: sections} = res as { channel_sections: ChannelSection[] };
 
       if (!sections) {
-        console.log('No sections found', res);
+        console.warn('No sections found', res);
         return;
       }
 
       const yamlStruct: {[key: string]: { emoji: string, channels: string[]}} = {};
 
       sections.forEach(({name, emoji, channel_ids_page: channels}) => {
+        if (ignoredSections.includes(name)) return;
+
         yamlStruct[name] = {
           emoji,
           channels: channels.channel_ids.map(id => channelIdToNameMap[id] || id)

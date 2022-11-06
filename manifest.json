@@ -23,7 +23,7 @@
     "service_worker": "dist/background.js"
   },
   "action": {
-    "default_title": "Organise your Slack sidebar",
+    "default_title": "Organise your Slack workspace",
     "default_popup": "dist/popup.html"
   }
 }

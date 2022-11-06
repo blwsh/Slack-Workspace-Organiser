@@ -1,17 +1,35 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Document</title>
+    <title>Slack Workspace Organiser</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div id="visit-slack-notice">
+        <div class="p-2">
+            <img src="slack.png" alt="Slack Logo" class="visit-slack-notice__img my-2">
+            <p class="my-2">Please open a Slack workspace in your browser to continue.</p>
+            <form action="https://slack.com">
+                <button type="submit" formtarget="_blank">
+                    <img src="cards.svg" alt="Open Slack in new tab"> Open Slack
+                </button>
+            </form>
+        </div>
+    </div>
+
     <div id="introduction">
         <div class="container">
-            <div id="status-indicator" title="Status Indicator"></div>
-            <h1>Slack Workspace Organiser</h1>
+            <div class="flex space-between align-center">
+                <h1>Slack Workspace Organiser</h1>
+
+                <div>
+                    <a target="_blank" href="https://github.com/sponsors/blwsh">Contribute</a>
+                    <div id="status-indicator" title="Status Indicator"></div>
+                </div>
+            </div>
             <p>
                 Ordering your channels and DMs in to sidebar sections helps with productivity and makes it easier to find the right person, team or topic.
             </p>
@@ -40,7 +58,7 @@
         </label>
 
         <div>
-            <button id="processImport" class="mb-1">Import</button>
+            <button id="processImport">Import</button>
             <button id="cancelImport" class="btn-grey mx-1">Cancel</button>
             <span id="importerMessage"></span>
         </div>

@@ -22,4 +22,8 @@ ui.importer.textElement.addEventListener('change', onImporterTextChangeHandler);
 ui.importer.textElement.addEventListener('mouseleave', onImporterTextChangeHandler);
 
 // Update the status indicator
-util.getSlackToken().then(token => ui.statusIndicator.setIsOk(!!token));
+util.getSlackToken().then(token => {
+  ui.statusIndicator.setIsOk(!!token);
+  ui.introduction.show(!!token);
+  ui.visitSlackNotice.show(!token);
+});

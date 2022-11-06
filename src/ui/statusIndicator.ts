@@ -2,5 +2,6 @@ export const element = document.getElementById('status-indicator') as HTMLDivEle
 
 export function setIsOk(b: boolean) {
   element.classList.toggle('status-indicator--ok', b);
+  element.title = b ? 'Connected' : 'Not connected';
 }
 

@@ -6,3 +6,4 @@ export * as processImportButton from './processImportButton';
 export * as cancelImportButton from './cancelImportButton';
 export * as importerMessage from './importerMessage';
 export * as statusIndicator from './statusIndicator';
+export * as visitSlackNotice from './visitSlackNotice';
