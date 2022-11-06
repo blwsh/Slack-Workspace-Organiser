@@ -54,13 +54,20 @@
 
     <div id="importer" class="container d-none">
         <label for="importerText">
-            <textarea id="importerText" placeholder="Paste your import code here"></textarea>
+            <textarea id="importerText" placeholder="Paste your import code here" class="my-2"></textarea>
         </label>
 
-        <div>
+        <div class="my-2">
             <button id="processImport">Import</button>
             <button id="cancelImport" class="btn-grey mx-1">Cancel</button>
             <span id="importerMessage"></span>
+        </div>
+    </div>
+
+    <div id="modal-container">
+        <div id="modal">
+            <div id="modal-content"></div>
+            <button id="closeModal">Done</button>
         </div>
     </div>
 

@@ -34,15 +34,19 @@ export async function exportHandler() {
         }
       })
 
+      // Copies exported yaml to clipboard
       copy(yaml.dump(yamlStruct));
+
+      // Update UI
       ui.exportButton.enableButton();
-      alert('✅ Channel sections copied to clipboard.');
+      ui.modal.setContent(`<h1>✅ Channel sections copied to clipboard</h1>`);
+      ui.modal.show(true);
     });
   } catch (e) {
-    alert('❌ Error exporting channel sections.');
     console.error(e);
+    ui.exportButton.enableButton();
+    ui.modal.setContent(`<h1>❌ Error exporting channel sections.</h1>`);
+    ui.modal.show(true);
     throw e;
   }
-
-  ui.exportButton.enableButton();
 }
