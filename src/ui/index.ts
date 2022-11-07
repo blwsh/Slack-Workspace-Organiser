@@ -8,3 +8,4 @@ export * as importerMessage from './importerMessage';
 export * as statusIndicator from './statusIndicator';
 export * as visitSlackNotice from './visitSlackNotice';
 export * as modal from './modal';
+export * as loadingIndicator from './loadingIndicator';

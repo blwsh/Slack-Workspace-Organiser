@@ -8,8 +8,10 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div id="loading-indicator"></div>
+
     <div id="visit-slack-notice">
-        <div class="p-2">
+        <div>
             <img src="slack.png" alt="Slack Logo" class="visit-slack-notice__img my-2">
             <p class="my-2">Please open a Slack workspace in your browser to continue.</p>
             <form action="https://slack.com">
@@ -54,12 +56,12 @@
 
     <div id="importer" class="container d-none">
         <label for="importerText">
-            <textarea id="importerText" placeholder="Paste your import code here" class="my-2"></textarea>
+            <textarea id="importerText" placeholder="Paste YAML configuration here" class="my-2"></textarea>
         </label>
 
         <div class="my-2">
             <button id="processImport">Import</button>
-            <button id="cancelImport" class="btn-grey mx-1">Cancel</button>
+            <button id="cancelImport" class="btn-grey mx-1">Back</button>
             <span id="importerMessage"></span>
         </div>
     </div>
@@ -71,6 +73,6 @@
         </div>
     </div>
 
-    <script src="bundle.js"></script>
+    <script src="popup.bundle.js"></script>
 </body>
 </html>

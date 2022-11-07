@@ -5,7 +5,7 @@ export function onImporterTextChangeHandler(changeEvent: Event) {
   const textElement = changeEvent.target as HTMLTextAreaElement;
   const text = textElement.value;
 
-  if (text === "Importing...") return;
+  if (ui.processImportButton.element.textContent === "Importing...") return;
 
   const loaded = yaml.load(text);
   const isOk = loaded instanceof Object && Object.keys(loaded).length > 0

@@ -20,7 +20,7 @@
     "128": "resources/slack.png"
   },
   "background": {
-    "service_worker": "dist/background.js"
+    "service_worker": "dist/background.bundle.js"
   },
   "action": {
     "default_title": "Organise your Slack workspace",

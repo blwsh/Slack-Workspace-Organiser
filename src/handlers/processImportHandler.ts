@@ -1,16 +1,19 @@
 import * as yaml from "js-yaml";
 import * as ui from "../ui";
-import {InitSlack, swap} from "../util";
+import {InitSlack, swap} from "../utils/popupUtils";
 import {ChannelSection} from "../types";
-import Slack from "../slack";
+import Slack from "../services/slack";
 
 type ImportRows = Record<string, { emoji?: string, channels?: string[] }>
 
 export async function processImportHandler() {
   ui.importerMessage.setMessage('');
+  ui.loadingIndicator.show(true)
   ui.processImportButton.setEnabled(false);
   ui.processImportButton.setText('Importing...');
+  ui.importerMessage.setMessage('Do not close window.');
 
+  console.log('Parsing YAML');
   const sectionsToImport = (yaml.load(ui.importer.textElement.value) || {}) as ImportRows;
 
   try {
@@ -77,6 +80,7 @@ export async function processImportHandler() {
 
   ui.processImportButton.setEnabled(true);
   ui.processImportButton.setText('Import');
+  ui.loadingIndicator.show(false);
 }
 
 async function createSection(name: string, emoji: string = '', slack: Slack): Promise<string> {

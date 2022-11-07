@@ -1,5 +1,6 @@
-import {API_METHODS, SlackConfig} from "./types";
-import {invalidateToken} from "./util";
+import {API_METHODS, SlackConfig} from "../types";
+import {invalidateToken} from "../utils/popupUtils";
+import {getSlackApiHost} from "../utils/sharedUtils";
 
 export default class Slack {
   constructor(
@@ -21,7 +22,7 @@ export default class Slack {
     // Add the action to the request body
     Object.entries(body).forEach(([key, value]) => formData.append(key, value));
 
-    const response = fetch(`https://txdo.slack.com/api/${action}`, {
+    const response = fetch(`${await getSlackApiHost()}/${action}`, {
       method: 'POST',
       "referrerPolicy": "no-referrer",
       headers: this.config.clientHeaders,

@@ -1,4 +1,3 @@
-import {captureXoxcToken} from "./util";
 import {
   cancelImportHandler,
   exportHandler,
@@ -7,11 +6,7 @@ import {
   processImportHandler
 } from "./handlers";
 import * as ui from "./ui";
-import * as util from "./util";
-
-// Find and store tokens which are used to authenticate with Slack
-chrome.webRequest.onBeforeRequest
-  .addListener(captureXoxcToken, {urls: ["https://*.slack.com/api/*"]}, ["requestBody"]);
+import * as sharedUtils from "./utils/sharedUtils";
 
 // Attach handlers to popup buttons
 ui.exportButton.element.addEventListener('click', exportHandler);
@@ -21,9 +16,22 @@ ui.cancelImportButton.element.addEventListener('click', cancelImportHandler);
 ui.importer.textElement.addEventListener('change', onImporterTextChangeHandler);
 ui.importer.textElement.addEventListener('mouseleave', onImporterTextChangeHandler);
 
-// Update the status indicator
-util.getSlackToken().then(token => {
-  ui.statusIndicator.setIsOk(!!token);
-  ui.introduction.show(!!token);
-  ui.visitSlackNotice.show(!token);
-});
+(async () => {
+  let hasToken = !!await sharedUtils.getSlackToken()
+
+  // Loop until we have a token
+  while (!hasToken) {
+    console.log('Checking for token...')
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    hasToken = !!await sharedUtils.getSlackToken()
+  }
+
+  // Once we have a token, we can show the UI
+  sharedUtils.getSlackToken().then(token => {
+    if (token) {
+      ui.visitSlackNotice.show(false);
+      ui.statusIndicator.setIsOk(true);
+      ui.introduction.show(true);
+    }
+  });
+})();

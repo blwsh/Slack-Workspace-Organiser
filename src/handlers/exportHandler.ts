@@ -1,4 +1,4 @@
-import {InitSlack} from "../util";
+import {InitSlack} from "../utils/popupUtils";
 import {ChannelSection} from "../types";
 import copy from "copy-to-clipboard";
 import * as yaml from "js-yaml";
@@ -9,6 +9,7 @@ const ignoredSections = ['', 'Slack Connect', 'Recent Apps'];
 export async function exportHandler() {
   try {
     ui.exportButton.disableButton();
+    ui.loadingIndicator.show(true)
 
     const slack = await InitSlack();
 
@@ -39,12 +40,14 @@ export async function exportHandler() {
 
       // Update UI
       ui.exportButton.enableButton();
+      ui.loadingIndicator.show(false)
       ui.modal.setContent(`<h1>✅ Channel sections copied to clipboard</h1>`);
       ui.modal.show(true);
     });
   } catch (e) {
     console.error(e);
     ui.exportButton.enableButton();
+    ui.loadingIndicator.show(false)
     ui.modal.setContent(`<h1>❌ Error exporting channel sections.</h1>`);
     ui.modal.show(true);
     throw e;
