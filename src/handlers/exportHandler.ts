@@ -4,7 +4,7 @@ import copy from "copy-to-clipboard";
 import * as yaml from "js-yaml";
 import * as ui from "../ui";
 
-const ignoredSections = ['', 'Slack Connect', 'Recent Apps'];
+const IGNORED_SECTIONS = ['', 'Slack Connect', 'Recent Apps'];
 
 export async function exportHandler() {
   try {
@@ -27,7 +27,7 @@ export async function exportHandler() {
       const yamlStruct: {[key: string]: { emoji: string, channels: string[]}} = {};
 
       sections.forEach(({name, emoji, channel_ids_page: channels}) => {
-        if (ignoredSections.includes(name)) return;
+        if (IGNORED_SECTIONS.includes(name)) return;
 
         yamlStruct[name] = {
           emoji,
@@ -38,18 +38,18 @@ export async function exportHandler() {
       // Copies exported yaml to clipboard
       copy(yaml.dump(yamlStruct));
 
-      // Update UI
-      ui.exportButton.enableButton();
-      ui.loadingIndicator.show(false)
-      ui.modal.setContent(`<h1>✅ Channel sections copied to clipboard</h1>`);
-      ui.modal.show(true);
+      resetUIWithMessage(`<h1>✅ Channel sections copied to clipboard</h1>`)
     });
   } catch (e) {
+    resetUIWithMessage(`<h1>❌ Error exporting channel sections.</h1>`)
     console.error(e);
-    ui.exportButton.enableButton();
-    ui.loadingIndicator.show(false)
-    ui.modal.setContent(`<h1>❌ Error exporting channel sections.</h1>`);
-    ui.modal.show(true);
     throw e;
   }
+}
+
+function resetUIWithMessage(message: string) {
+  ui.exportButton.enableButton();
+  ui.loadingIndicator.show(false)
+  ui.modal.setContent(`<h1>${message}</h1>`);
+  ui.modal.show(true);
 }
