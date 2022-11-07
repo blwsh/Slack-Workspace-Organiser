@@ -11,6 +11,19 @@ export default class Slack {
   }
 
   async postMessage(action: API_METHODS, body: Record<string, string | Blob> = {}): Promise<any> {
+    // If there is a cursor in the request, search the cache for it and return the cached response if it exists.
+    if (body.cursor) {
+      const cachedResult = await chrome.storage.local.get(body.cursor);
+      if (typeof body.cursor === 'string' && cachedResult[body.cursor]) {
+        console.info(`Using cached result for cursor ${body.cursor}`);
+
+        // Only use cached result if next_cursor is present
+        if (cachedResult[body.cursor].response_metadata.next_cursor !== '')
+          return cachedResult[body.cursor];
+      }
+    }
+
+    // If there is no cursor, or the cursor is not in the cache, make a request to the Slack API
     const formData = new FormData()
 
     // Add the xoxc token to the request body
@@ -28,6 +41,15 @@ export default class Slack {
       body: formData,
     }).then(res => res.json());
 
+    // If the body has a cursor and the response is ok, store it in the cache
+    if (body.cursor && (await response).ok) {
+      if (typeof body.cursor === 'string') {
+        console.log('Caching', body.cursor, await response);
+        chrome.storage.local.set({[body.cursor]: await response}).catch(console.error);
+      }
+    }
+
+    // If ok is false throw an error and if the token is invalid, invalidate it.
     response.then(res => {
       // If the token is invalid, clear it from storage
       if (!res.ok) {
