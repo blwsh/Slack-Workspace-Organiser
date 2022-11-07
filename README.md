@@ -1,4 +1,8 @@
-# Slack Org Sidebar Organiser (SOSO)
+# Slack Workspace Organiser
 
-SOSO is a tool to help you organise your Slack sidebar. It will automatically
-move channels to the correct category based on the channel name.
+![Screenshot](resources/screenshot.jpg)
+
+Organise your Slack sidebar by using a yaml file. Ordering your sidebar helps 
+with productivity and makes it easier to find the right person, team or topic.
+
+Does your company use Slack Workspace Organiser? If so, please consider [Sponsoring this project](https://github.com/sponsors/blwsh)
