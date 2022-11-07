@@ -14,3 +14,8 @@ export function show(show: boolean = true) {
 export function setContent(content: string) {
   contentElement.innerHTML = content;
 }
+
+export function showWithMessage(message: string) {
+  setContent(message);
+  show(true);
+}

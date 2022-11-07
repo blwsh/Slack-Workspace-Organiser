@@ -65,21 +65,21 @@ export async function processImportHandler() {
       }
     }
 
-    // Update the UI
     console.log('✅ Import complete');
+    ui.modal.showWithMessage(`<h1>✅ Import successful!</h1>`);
     ui.importerMessage.setMessage('Import successful!');
-    ui.modal.setContent(`<h1>✅ Import successful!</h1>`);
-    ui.modal.show(true);
   } catch (e) {
-    // Show error message in UI
     console.error(e);
+    ui.modal.showWithMessage(`<h1>❌ There was an error importing your sections.</h1>`);
     ui.importerMessage.setMessage('There was an error importing your sections.');
-    ui.modal.setContent(`<h1>❌ There was an error importing your sections.</h1>`);
-    ui.modal.show(true);
   }
 
-  ui.processImportButton.setEnabled(true);
+  resetUI();
+}
+
+function resetUI() {
   ui.processImportButton.setText('Import');
+  ui.processImportButton.setEnabled(true);
   ui.loadingIndicator.show(false);
 }
 
@@ -91,6 +91,6 @@ async function createSection(name: string, emoji: string = '', slack: Slack): Pr
 
 async function moveChannelsToSection(sectionId: string, channelIds: string[], slack: Slack): Promise<void> {
   return slack.postMessage('users.channelSections.channels.bulkUpdate', {
-    insert: JSON.stringify([{channel_section_id: sectionId, channel_ids: channelIds}])
+    insert: JSON.stringify([{channel_section_id: sectionId, channel_ids: channelIds}]),
   })
 }

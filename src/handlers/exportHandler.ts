@@ -48,8 +48,7 @@ export async function exportHandler() {
 }
 
 function resetUIWithMessage(message: string) {
-  ui.exportButton.enableButton();
   ui.loadingIndicator.show(false)
-  ui.modal.setContent(`<h1>${message}</h1>`);
-  ui.modal.show(true);
+  ui.modal.showWithMessage(`<h1>${message}</h1>`);
+  ui.exportButton.enableButton();
 }
