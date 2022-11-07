@@ -8,7 +8,7 @@ import {
 import * as ui from "./ui";
 import * as sharedUtils from "./utils/sharedUtils";
 
-// Attach handlers to popup buttons
+// Attach handlers to popup elements
 ui.exportButton.element.addEventListener('click', exportHandler);
 ui.openImporterButton.element.addEventListener('click', openImporterHandler);
 ui.processImportButton.element.addEventListener('click', processImportHandler);
@@ -16,6 +16,7 @@ ui.cancelImportButton.element.addEventListener('click', cancelImportHandler);
 ui.importer.textElement.addEventListener('change', onImporterTextChangeHandler);
 ui.importer.textElement.addEventListener('mouseleave', onImporterTextChangeHandler);
 
+// Initialize popup
 (async () => {
   let hasToken = !!await sharedUtils.getSlackToken()
 
