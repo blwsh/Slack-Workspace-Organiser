@@ -11,7 +11,7 @@ export default class Slack {
     }
   }
 
-  async postMessage(action: API_METHODS, body: Record<string, string | Blob> = {}): Promise<any> {
+  async postMessage(action: API_METHODS, body: Record<string, string | Blob> = {}): Promise<Record<string, any>> {
     const formData = new FormData()
 
     // Add the xoxc token to the request body

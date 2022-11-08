@@ -26,31 +26,38 @@ export async function processImportHandler() {
 
     console.log('Getting channels');
     const channelNameToIdMap = swap(await slack.getConversationIdsToNameMap(userIdToUsernameMap));
+    console.log('Channel names to channel ID map', channelNameToIdMap)
 
     console.log('Getting sections');
     const {channel_sections: existingSections} = await slack.postMessage('users.channelSections.list') as { channel_sections: ChannelSection[] };
     const sectionNameToIdMap = Object.fromEntries(
       existingSections.map(({channel_section_id: id, name}) => [name, id])
     );
-
-    console.log('Channel names to channel ID map', channelNameToIdMap)
     console.log('Section names to section ID map', sectionNameToIdMap);
+
+    const channelIdToSectionIdMap: Record<string, any> = {};
+    existingSections.forEach(({channel_section_id: sectionId, channel_ids_page}) => {
+      channel_ids_page.channel_ids.forEach(channelId => {
+        channelIdToSectionIdMap[channelId] = sectionId;
+      });
+    });
+    console.log('Channel name to section ID map', channelIdToSectionIdMap);
 
     // Iterate over each section to import
     for (const [sectionName, section] of Object.entries(sectionsToImport)) {
-      let sectionId = sectionNameToIdMap[sectionName];
+      let destinationSectionId = sectionNameToIdMap[sectionName];
 
       const {emoji, channels = []} = section || {};
 
-      // If sectionId is falsey it's because a mapping for the section name to section id doesn't exist which in turn
+      // If destinationSectionId is falsey it's because a mapping for the section name to section id doesn't exist which in turn
       // means the section doesn't exist in the slack workspace yet and needs to be created.
-      if (!sectionId) {
-        // Create the section and update the sectionId variable
-        sectionNameToIdMap[sectionName] = sectionId = await createSection(sectionName, emoji, slack);
-        console.log('Created new section', sectionId);
+      if (!destinationSectionId) {
+        // Create the section and update the destinationSectionId variable
+        sectionNameToIdMap[sectionName] = destinationSectionId = await createSection(sectionName, emoji, slack);
+        console.log('Created new section', destinationSectionId);
 
-        // If the sectionId is still falsey, it means the section couldn't be created, and we should skip this section.
-        if (!sectionId) {
+        // If the destinationSectionId is still falsey, it means the section couldn't be created, and we should skip this section.
+        if (!destinationSectionId) {
           console.warn('Unable to create section', sectionName);
           continue;
         }
@@ -58,10 +65,24 @@ export async function processImportHandler() {
 
       // Move channels to section
       if (channels.length) {
-        console.log('Moving conversations to section', sectionName, channels);
-        moveChannelsToSection(
-          sectionId, channels.map(channelName => channelNameToIdMap[channelName]).filter(Boolean), slack
-        ).catch(console.warn);
+        // Group channels by section id
+        const groupedChannels = {} as Record<string, string[]>;
+        channels.forEach(channelName => {
+          const sectionId = channelIdToSectionIdMap[channelNameToIdMap[channelName]];
+          const arr = groupedChannels[sectionId] || []
+          groupedChannels[sectionId] = [...arr, channelName];
+        })
+
+        Object.entries(groupedChannels).forEach(([currentSectionId, groupChannels]) => {
+          console.log(`Moving conversations from section ${currentSectionId} to ${destinationSectionId}`, groupChannels);
+
+          moveChannelsToSection(
+            destinationSectionId,
+            currentSectionId,
+            groupChannels.map(channelName => channelNameToIdMap[channelName]).filter(Boolean),
+            slack
+          ).catch(console.warn);
+        });
       }
     }
 
@@ -89,8 +110,19 @@ async function createSection(name: string, emoji: string = '', slack: Slack): Pr
   })
 }
 
-async function moveChannelsToSection(sectionId: string, channelIds: string[], slack: Slack): Promise<void> {
-  return slack.postMessage('users.channelSections.channels.bulkUpdate', {
-    insert: JSON.stringify([{channel_section_id: sectionId, channel_ids: channelIds}]),
-  })
+async function moveChannelsToSection(
+  newSectionId: string,
+  oldSectionId: string,
+  channelIds: string[],
+  slack: Slack
+) {
+  const body: Record<string, any> = {
+    insert: JSON.stringify([{channel_section_id: newSectionId, channel_ids: channelIds}]),
+  }
+
+  if (oldSectionId && oldSectionId !== 'undefined') {
+    body['remove'] = JSON.stringify([{channel_section_id: oldSectionId, channel_ids: channelIds}]);
+  }
+
+  return slack.postMessage('users.channelSections.channels.bulkUpdate', body)
 }
