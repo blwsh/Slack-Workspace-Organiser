@@ -84,7 +84,7 @@ export async function processImportHandler() {
           moveChannelsToSection(
             destinationSectionId,
             currentSectionId,
-            groupChannels.map(channelName => channelNameToIdMap[channelName]).filter(Boolean),
+            groupChannels.map(channelName => channelNameToIdMap[channelName] || channelName).filter(Boolean),
             slack
           ).catch(console.warn);
         });

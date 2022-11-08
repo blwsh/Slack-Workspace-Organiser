@@ -36,7 +36,7 @@ export default class Slack {
           invalidateToken();
         }
 
-        throw new Error(res.error);
+        throw new Error(res.response_metadata?.messages.join(' ') || res.error);
       }
     });
 
