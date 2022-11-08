@@ -29,7 +29,7 @@ General:
     - "#announcements"
 ```
 
-## Contribute
+## Contributing
 
 All contributions are welcome. Please read the [contribution guidelines](CONTRIBUTING.md) before you start.
 
