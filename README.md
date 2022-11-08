@@ -36,13 +36,13 @@ All contributions are welcome. Please read the [contribution guidelines](CONTRIB
 ### Installation
 
 ```bash
-$ npm install
+$ make clean install
 ```
 
 ### Development
 
 ```bash
-$ npm run start
+$ make start
 ```
 
 
