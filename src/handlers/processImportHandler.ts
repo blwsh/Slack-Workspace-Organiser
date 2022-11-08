@@ -7,7 +7,6 @@ import Slack from "../services/slack";
 type ImportRows = Record<string, { emoji?: string, channels?: string[] }>
 
 export async function processImportHandler() {
-  ui.importerMessage.setMessage('');
   ui.loadingIndicator.show(true)
   ui.processImportButton.setEnabled(false);
   ui.processImportButton.setText('Importing...');
@@ -19,6 +18,8 @@ export async function processImportHandler() {
   try {
     const slack = await InitSlack();
     console.log('Importing', sectionsToImport);
+
+    console.group('Create maps for import');
 
     // Create all maps which are required to resolve channel names and usernames to conversation ids.
     console.log('Getting users');
@@ -42,6 +43,10 @@ export async function processImportHandler() {
       });
     });
     console.log('Channel name to section ID map', channelIdToSectionIdMap);
+
+    console.groupEnd();
+
+    console.group('Importing sections');
 
     // Iterate over each section to import
     for (const [sectionName, section] of Object.entries(sectionsToImport)) {
@@ -85,6 +90,8 @@ export async function processImportHandler() {
         });
       }
     }
+
+    console.groupEnd();
 
     console.log('✅ Import complete');
     ui.modal.showWithMessage(`<h1>✅ Import successful!</h1>`);
