@@ -4,12 +4,8 @@
   "manifest_version": 3,
   "description": "Organise your Slack sidebar by using a yaml file",
   "permissions": [
-    "tabs",
     "storage",
-    "activeTab",
-    "webNavigation",
-    "webRequest",
-    "cookies"
+    "webRequest"
   ],
   "host_permissions": [
     "https://*.slack.com/*"
