@@ -7,6 +7,8 @@ with productivity and makes it easier to find the right person, team or topic.
 
 Does your company use Slack Workspace Organiser? If so, please consider [sponsoring this project](https://github.com/sponsors/blwsh)
 
+[<img alt="Chrome Web Store" src="resources/chrome-web-store.png" height="64"/>](https://chrome.google.com/webstore/detail/slack-workspace-organiser/nmfjdabgefhlciidgpbfebbbmfligboj "Available on Chrome Web Store")
+
 ## Example Configuration
 
 Below is an example configuration file which is used by the extension to create sections and move channels and DMs into them.
